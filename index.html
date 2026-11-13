@@ -138,11 +138,14 @@
   <div id="lockLayer" class="lock-layer" hidden>
     <div class="lock-inner">
     <button id="unlockBtn" type="button" class="unlock-btn" aria-label="長押しでロック解除">
-      <span id="holdFill" class="hold-fill"></span>
-      <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>
-      <span class="rel">ロック中</span>
+      <span class="unlock-face base" aria-hidden="true">
+        <span class="lock-icon"><span class="shackle"></span><span class="body"></span></span>ロック中
+      </span>
+      <!-- 緑で満たした面。長押し中は上から減っていく -->
+      <span id="holdFill" class="unlock-face fill">
+        <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>ロック中
+      </span>
     </button>
-    <div class="unlock-hint">長押しで解除</div>
     </div>
   </div>
 </div>

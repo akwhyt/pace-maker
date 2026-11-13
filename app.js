@@ -162,7 +162,7 @@
     locked = on;
     holdAt = null;
     cancelAnimationFrame(holdRaf);
-    el.holdFill.style.height = '0%';
+    el.holdFill.style.clipPath = 'inset(0 0 0 0)';
     setHidden(el.lockLayer, !on);
   }
 
@@ -290,7 +290,7 @@
   function holdFrame() {
     if (holdAt == null) return;
     const p = Math.min(1, (performance.now() - holdAt) / HOLD_MS);
-    el.holdFill.style.height = (p * 100).toFixed(1) + '%';
+    el.holdFill.style.clipPath = 'inset(' + (p * 100).toFixed(1) + '% 0 0 0)';
     if (p >= 1) { setLocked(false); return; }
     holdRaf = requestAnimationFrame(holdFrame);
   }
@@ -304,7 +304,7 @@
     if (holdAt == null) return;
     holdAt = null;
     cancelAnimationFrame(holdRaf);
-    el.holdFill.style.height = '0%';
+    el.holdFill.style.clipPath = 'inset(0 0 0 0)';
   }
   el.unlockBtn.addEventListener('pointerdown', holdStart);
   for (const t of ['pointerup', 'pointerleave', 'pointercancel']) el.unlockBtn.addEventListener(t, holdEnd);

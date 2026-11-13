@@ -1,5 +1,5 @@
 // アプリ更新時は VERSION を上げる（古いキャッシュは activate で削除される）
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = 'pacemaker-' + VERSION;
 const ASSETS = [
   './',

@@ -400,21 +400,29 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   border: 2px solid var(--accent);
   background: var(--card);
   color: var(--accent);
+  padding: 0;
   touch-action: none;
   -webkit-touch-callout: none;
 }
-.hold-fill {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 0;
-  background: var(--accent);
-  opacity: 0.4;
+.unlock-face {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 14px;
   pointer-events: none;
 }
-.unlock-btn .lock-icon, .unlock-btn .rel { position: relative; }
-.unlock-hint { font-size: 13px; color: var(--sub); }
+/* 長押しで減った部分に見える下地（暗い背景・緑の文字） */
+.unlock-face.base { color: var(--accent); }
+/* ロック中は緑で満たし、文字は黒抜き。長押し中は clip-path で上から削っていく */
+.unlock-face.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  text-shadow: none;
+  clip-path: inset(0 0 0 0);
+}
 
 /* 計測中は長押しメニュー・テキスト選択を出さない */
 .run, .run * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
