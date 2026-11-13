@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#020A04">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="description" content="配達時間と個数から1ラウンドの時間を出し、ラウンドごとのカウントダウンで配達ペースを保つタイマー">
+<title>配達ペースメーカー</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/inter-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/notosansjp-sub.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" class="app">
+
+  <!-- 画面1：設定 -->
+  <section id="setup" class="screen setup">
+    <div class="title">
+      <div class="eyebrow">PACE MAKER</div>
+      <h1>配達ペースメーカー</h1>
+    </div>
+
+    <div class="card form">
+      <div class="field">
+        <div class="label">配達時間</div>
+        <div class="row">
+          <label for="hrs" class="num-input">
+            <input id="hrs" type="number" inputmode="numeric" min="0" autocomplete="off">
+            <span>時間</span>
+          </label>
+          <label for="mins" class="num-input">
+            <input id="mins" type="number" inputmode="numeric" min="0" max="59" autocomplete="off">
+            <span>分</span>
+          </label>
+        </div>
+      </div>
+      <div class="field">
+        <div class="label">配達個数</div>
+        <label for="cnt" class="num-input">
+          <input id="cnt" type="number" inputmode="numeric" min="1" autocomplete="off">
+          <span>個</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="per-round">
+      <div class="col">
+        <div class="label">1ラウンドあたり</div>
+        <div id="perRound" class="per-round-val accent">--:--</div>
+      </div>
+      <div class="rounds-x">× <span id="setupCount">0</span>ラウンド</div>
+    </div>
+
+    <div class="start-preview">
+      <div class="label">今スタートすると</div>
+      <div class="line">
+        <span id="setupClock" class="t">--:--</span>
+        <span class="arrow">→</span>
+        <span id="setupEnd" class="t accent">--:--</span>
+        <span class="suffix">に終了</span>
+      </div>
+    </div>
+
+    <div class="grow"></div>
+    <button id="startBtn" type="button" class="btn-primary">スタート</button>
+  </section>
+
+  <!-- 画面2：計測 -->
+  <section id="run" class="screen run" hidden>
+    <header class="run-header">
+      <div class="eyebrow">PACE MAKER</div>
+      <div class="header-right">
+        <div id="pausedBadge" class="badge" hidden>一時停止中</div>
+        <button id="lockBtn" type="button" class="lock-btn">
+          <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>
+          ロック
+        </button>
+      </div>
+    </header>
+
+    <div class="card rounds">
+      <div class="rounds-col left">
+        <div class="label nowrap">現在 <span class="tnum">/ <span id="runCount">0</span></span></div>
+        <div id="roundNum" class="round-num accent">1</div>
+      </div>
+      <div class="rounds-col right">
+        <div class="label nowrap">残り</div>
+        <div id="leftNum" class="round-num">0</div>
+      </div>
+    </div>
+
+    <div class="timer">
+      <div id="timerLabel" class="label timer-label">次のラウンドまで</div>
+      <div id="timerText" class="timer-text">0:00</div>
+    </div>
+
+    <div class="bar"><div id="barFill" class="bar-fill"></div></div>
+
+    <div class="totals">
+      <div class="pair">
+        <span class="label">経過</span>
+        <span id="elapsedText" class="totals-val dim">0:00</span>
+      </div>
+      <div class="pair">
+        <span class="label">全体残り</span>
+        <span id="overallText" class="totals-val">0:00</span>
+      </div>
+    </div>
+
+    <div class="card end-card">
+      <div class="end-col">
+        <div class="label sm">終了予定</div>
+        <div id="runEnd" class="end-val accent">--:--</div>
+      </div>
+      <div class="now-col">
+        <div class="label sm">現在時刻</div>
+        <div id="runClock" class="now-val">--:--</div>
+      </div>
+    </div>
+
+    <div class="grow"></div>
+    <div class="actions">
+      <button id="pauseBtn" type="button" class="btn-secondary">一時停止</button>
+      <button id="stopBtn" type="button" class="btn-ghost">終了</button>
+    </div>
+  </section>
+
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- 画面ロック -->
+  <div id="lockLayer" class="lock-layer" hidden>
+    <div class="lock-inner">
+    <button id="unlockBtn" type="button" class="unlock-btn" aria-label="長押しでロック解除">
+      <span id="holdFill" class="hold-fill"></span>
+      <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>
+      <span class="rel">ロック中</span>
+    </button>
+    <div class="unlock-hint">長押しで解除</div>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

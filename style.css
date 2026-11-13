@@ -1,0 +1,420 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter-sub.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('fonts/notosansjp-sub.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --bg: #020A04;
+  --card: #061A0C;
+  --divider: #0F3D1E;
+  --border: #145A2A;
+  --border-strong: #1B7A38;
+  --text: #C4FFD2;
+  --sub: #46C66A;
+  --accent: #00FF41;
+  --on-accent: #001A08;
+  --warn: #FFB000;
+  /* 幅390pxを基準にしたスケール単位（最大430px幅まで） */
+  --u: calc(min(100vw, 430px) / 390);
+  --font: -apple-system, 'SF Pro Display', 'Inter', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overscroll-behavior: none;
+}
+
+body {
+  color: var(--text);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.35);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] { display: none !important; }
+
+.app {
+  position: relative;
+  max-width: 430px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 28px)
+    calc(env(safe-area-inset-right, 0px) + 20px)
+    calc(env(safe-area-inset-bottom, 0px) + 24px)
+    calc(env(safe-area-inset-left, 0px) + 20px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.screen { display: flex; flex-direction: column; flex-grow: 1; }
+.setup { gap: 20px; }
+.run { gap: 16px; }
+.grow { flex-grow: 1; }
+
+.label { font-size: 16px; color: var(--sub); }
+.label.sm { font-size: 15px; }
+.nowrap { white-space: nowrap; }
+.tnum { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.accent { color: var(--accent); }
+.dim { color: var(--sub); }
+
+.eyebrow {
+  letter-spacing: 0.16em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+.card { background: var(--card); }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  text-shadow: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+button:disabled { cursor: default; opacity: 0.35; }
+
+/* ---------- 設定画面 ---------- */
+.title { display: flex; flex-direction: column; gap: 4px; }
+.title h1 { margin: 0; font-size: 28px; font-weight: 700; }
+
+.form {
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field { display: flex; flex-direction: column; gap: 8px; }
+.row { display: flex; gap: 12px; }
+.row .num-input { flex: 1; min-width: 0; }
+
+.num-input {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+.num-input input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  color: var(--text);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-size: 38px;
+  font-weight: 700;
+  text-shadow: inherit;
+  outline: none;
+  caret-color: var(--accent);
+}
+.num-input span {
+  font-size: 17px;
+  color: var(--sub);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.num-input:focus-within { box-shadow: inset 0 0 0 1px var(--border); }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+.per-round {
+  border: 1px solid var(--divider);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+.per-round .col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.per-round-val {
+  letter-spacing: -0.02em;
+  font-size: calc(54 * var(--u));
+  font-weight: 700;
+  white-space: nowrap;
+}
+.rounds-x { font-size: 17px; color: var(--sub); padding-bottom: 8px; white-space: nowrap; }
+
+.start-preview { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
+.start-preview .line { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+.start-preview .t { letter-spacing: -0.02em; font-size: calc(30 * var(--u)); font-weight: 700; }
+.start-preview .arrow { font-size: 20px; color: var(--sub); }
+.start-preview .suffix { font-size: 17px; color: var(--text); }
+
+.btn-primary {
+  height: 64px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: none;
+}
+.btn-primary:not(:disabled):active { filter: brightness(0.85); }
+
+/* ---------- 計測画面 ---------- */
+.run-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+}
+.header-right { display: flex; align-items: center; gap: 10px; }
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--divider);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.lock-btn, .unlock-btn {
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.lock-btn {
+  border: 1px solid var(--border-strong);
+  background: var(--card);
+  color: var(--text);
+}
+.lock-btn:active { background: var(--divider); }
+
+.lock-icon { position: relative; display: block; width: 16px; height: 19px; flex-shrink: 0; }
+.lock-icon .shackle {
+  position: absolute; top: 0; left: 2px;
+  width: 12px; height: 10px;
+  border: 2.5px solid currentColor; border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+}
+.lock-icon .body {
+  position: absolute; bottom: 0; left: 0;
+  width: 16px; height: 11px;
+  background: currentColor;
+  border-radius: 3px;
+}
+
+.rounds {
+  border-radius: 22px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.rounds-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rounds-col.left { padding-right: 16px; border-right: 1px solid var(--divider); }
+.rounds-col.right { padding-left: 18px; }
+.round-num {
+  letter-spacing: -0.03em;
+  font-size: calc(72 * var(--u));
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+  color: var(--text);
+}
+.round-num.accent { color: var(--accent); }
+.round-num.d4 { font-size: calc(56 * var(--u)); }
+.round-num.over { font-size: calc(56 * var(--u)); color: var(--warn); }
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+}
+.timer-label { font-weight: 500; white-space: nowrap; }
+.timer-text {
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-size: calc(108 * var(--u));
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+.timer-text.warn { color: var(--warn); }
+.timer-text.over { font-size: calc(88 * var(--u)); }
+.timer-text.over-h { font-size: calc(64 * var(--u)); }
+
+.bar { height: 10px; background: var(--divider); border-radius: 999px; overflow: hidden; }
+.bar-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.45);
+}
+.bar-fill.warn { background: var(--warn); box-shadow: 0 0 8px rgba(255, 176, 0, 0.45); }
+
+.totals {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 4px;
+  margin-top: -4px;
+  white-space: nowrap;
+}
+.totals .pair { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.totals-val {
+  letter-spacing: -0.02em;
+  font-size: calc(26 * var(--u));
+  font-weight: 700;
+  color: var(--text);
+}
+.totals-val.dim { color: var(--sub); }
+.totals-val.warn { color: var(--warn); }
+
+.end-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: stretch;
+}
+.end-col {
+  flex: 1.25;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 14px;
+  border-right: 1px solid var(--divider);
+  min-width: 0;
+}
+.now-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  padding-left: 14px;
+  min-width: 0;
+}
+.end-val {
+  letter-spacing: -0.02em;
+  font-size: calc(44 * var(--u));
+  font-weight: 700;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+.now-val {
+  letter-spacing: -0.02em;
+  font-size: calc(30 * var(--u));
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.actions { display: flex; gap: 10px; }
+.btn-secondary, .btn-ghost {
+  flex: 1;
+  height: 60px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-size: 19px;
+  font-weight: 700;
+}
+.btn-secondary { background: var(--card); color: var(--text); }
+.btn-ghost { background: transparent; color: var(--sub); }
+.btn-secondary:active, .btn-ghost:active { background: var(--divider); }
+
+/* ---------- 走査線 ---------- */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg,
+    rgba(0, 255, 65, 0.045) 0px, rgba(0, 255, 65, 0.045) 1px,
+    transparent 1px, transparent 3px);
+  z-index: 5;
+}
+
+/* ---------- 画面ロック ---------- */
+.lock-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: transparent;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* ヘッダーのロックボタンと同じ位置にボタンを重ねる */
+.lock-inner {
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 28px)
+    calc(env(safe-area-inset-right, 0px) + 20px)
+    0
+    calc(env(safe-area-inset-left, 0px) + 20px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.unlock-btn {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--accent);
+  background: var(--card);
+  color: var(--accent);
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+.hold-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0;
+  background: var(--accent);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.unlock-btn .lock-icon, .unlock-btn .rel { position: relative; }
+.unlock-hint { font-size: 13px; color: var(--sub); }
+
+/* 計測中は長押しメニュー・テキスト選択を出さない */
+.run, .run * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

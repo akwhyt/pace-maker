@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>配達ペースメーカー</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#00FF41}a:hover{color:#C4FFD2}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #020A04; color: #C4FFD2; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Hiragino Sans', 'Noto Sans JP', sans-serif; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; text-shadow: 0 0 6px rgba(0, 255, 65, 0.35); padding: 28px 20px 24px; display: flex; flex-direction: column; overflow: hidden">
+
+<sc-if value="{{isSetup}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 20px; flex-grow: 1">
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <div style="font-variant-numeric: tabular-nums; letter-spacing: 0.16em; font-size: 13px; font-weight: 600; color: #46C66A">PACE MAKER</div>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700">配達ペースメーカー</h1>
+  </div>
+
+  <div style="background: #061A0C; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 16px; color: #46C66A">配達時間</div>
+      <div style="display: flex; gap: 12px">
+        <label for="hrs" style="flex: 1; display: flex; align-items: baseline; gap: 6px; background: #020A04; border-radius: 14px; padding: 10px 14px">
+          <input id="hrs" type="number" inputmode="numeric" min="0" value="{{hours}}" onChange="{{onHours}}" style="width: 100%; background: transparent; border: 0; color: #C4FFD2; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 38px; font-weight: 700; outline: none">
+          <span style="font-size: 17px; color: #46C66A; white-space: nowrap; flex-shrink: 0">時間</span>
+        </label>
+        <label for="mins" style="flex: 1; display: flex; align-items: baseline; gap: 6px; background: #020A04; border-radius: 14px; padding: 10px 14px">
+          <input id="mins" type="number" inputmode="numeric" min="0" max="59" value="{{minutes}}" onChange="{{onMinutes}}" style="width: 100%; background: transparent; border: 0; color: #C4FFD2; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 38px; font-weight: 700; outline: none">
+          <span style="font-size: 17px; color: #46C66A; white-space: nowrap; flex-shrink: 0">分</span>
+        </label>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 16px; color: #46C66A">配達個数</div>
+      <label for="cnt" style="display: flex; align-items: baseline; gap: 6px; background: #020A04; border-radius: 14px; padding: 10px 14px">
+        <input id="cnt" type="number" inputmode="numeric" min="1" value="{{count}}" onChange="{{onCount}}" style="width: 100%; background: transparent; border: 0; color: #C4FFD2; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 38px; font-weight: 700; outline: none">
+        <span style="font-size: 17px; color: #46C66A; white-space: nowrap; flex-shrink: 0">個</span>
+      </label>
+    </div>
+  </div>
+
+  <div style="border: 1px solid #0F3D1E; border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: flex-end">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <div style="font-size: 16px; color: #46C66A">1ラウンドあたり</div>
+      <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 54px; font-weight: 700; color: {{accent}}">{{perRoundText}}</div>
+    </div>
+    <div style="font-size: 17px; color: #46C66A; padding-bottom: 8px">× {{countNum}}ラウンド</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 6px; padding: 0 4px">
+    <div style="font-size: 16px; color: #46C66A">今スタートすると</div>
+    <div style="display: flex; align-items: baseline; gap: 10px; white-space: nowrap">
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 30px; font-weight: 700">{{clockText}}</span>
+      <span style="font-size: 20px; color: #46C66A">→</span>
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 30px; font-weight: 700; color: {{accent}}">{{endText}}</span>
+      <span style="font-size: 17px; color: #C4FFD2">に終了</span>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1"></div>
+  <button type="button" onClick="{{start}}" disabled="{{cannotStart}}" style="height: 64px; border: 0; border-radius: 18px; background: {{accent}}; color: #001A08; font-family: inherit; font-size: 22px; font-weight: 700; cursor: pointer">スタート</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isRun}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1">
+  <div style="display: flex; justify-content: space-between; align-items: center; height: 48px">
+    <div style="font-variant-numeric: tabular-nums; letter-spacing: 0.16em; font-size: 13px; font-weight: 600; color: #46C66A">PACE MAKER</div>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <sc-if value="{{isPaused}}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 6px 12px; border-radius: 999px; background: #0F3D1E; font-size: 15px; font-weight: 700; color: #C4FFD2">一時停止中</div>
+      </sc-if>
+      <button type="button" onClick="{{lock}}" style="height: 48px; padding: 0 14px; border-radius: 14px; border: 1px solid #1B7A38; background: #061A0C; color: #C4FFD2; display: flex; align-items: center; gap: 8px; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 700">
+        <span aria-hidden="true" style="position: relative; display: block; width: 16px; height: 19px">
+          <span style="position: absolute; top: 0; left: 2px; width: 12px; height: 10px; box-sizing: border-box; border: 2.5px solid #C4FFD2; border-bottom: 0; border-radius: 6px 6px 0 0"></span>
+          <span style="position: absolute; bottom: 0; left: 0; width: 16px; height: 11px; background: #C4FFD2; border-radius: 3px"></span>
+        </span>
+        ロック
+      </button>
+    </div>
+  </div>
+
+  <div style="background: #061A0C; border-radius: 22px; padding: 16px 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0">
+    <div style="display: flex; flex-direction: column; gap: 2px; padding-right: 16px; border-right: 1px solid #0F3D1E">
+      <div style="font-size: 16px; color: #46C66A; white-space: nowrap">現在 <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em">/ {{countNum}}</span></div>
+      <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.03em; font-size: {{roundSize}}px; font-weight: 700; line-height: 1.05; white-space: nowrap; color: {{roundColor}}">{{roundText}}</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px; padding-left: 18px">
+      <div style="font-size: 16px; color: #46C66A; white-space: nowrap">残り</div>
+      <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.03em; font-size: {{roundSize}}px; font-weight: 700; line-height: 1.05; white-space: nowrap; color: {{leftColor}}">{{leftText}}</div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 0">
+    <div style="font-size: 16px; color: #46C66A; font-weight: 500">{{timerLabel}}</div>
+    <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; white-space: nowrap; font-size: {{timerSize}}px; font-weight: 700; line-height: 1; color: {{timerColor}}">{{timerText}}</div>
+  </div>
+
+  <div style="height: 10px; background: #0F3D1E; border-radius: 999px; overflow: hidden">
+    <div style="height: 100%; width: {{pct}}%; background: {{barColor}}; border-radius: 999px"></div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px; margin-top: -4px; white-space: nowrap">
+    <div style="display: flex; align-items: baseline; gap: 8px">
+      <span style="font-size: 16px; color: #46C66A">経過</span>
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 26px; font-weight: 700; color: #46C66A">{{elapsedText}}</span>
+    </div>
+    <div style="display: flex; align-items: baseline; gap: 8px">
+      <span style="font-size: 16px; color: #46C66A">全体残り</span>
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 26px; font-weight: 700; color: {{overallColor}}">{{overallText}}</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <div style="background: #061A0C; border: 1px solid #145A2A; border-radius: 18px; padding: 12px 16px; display: flex; align-items: stretch">
+      <div style="flex: 1.25; display: flex; flex-direction: column; gap: 2px; padding-right: 14px; border-right: 1px solid #0F3D1E">
+        <div style="font-size: 15px; color: #46C66A">終了予定</div>
+        <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 44px; font-weight: 700; line-height: 1.05; white-space: nowrap; color: {{accent}}">{{endText}}</div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; padding-left: 14px">
+        <div style="font-size: 15px; color: #46C66A">現在時刻</div>
+        <div style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 30px; font-weight: 700; line-height: 1.1; white-space: nowrap">{{clockText}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1"></div>
+  <div style="display: flex; gap: 10px">
+    <button type="button" onClick="{{togglePause}}" style="flex: 1; height: 60px; border: 1px solid #145A2A; border-radius: 16px; background: #061A0C; color: #C4FFD2; font-family: inherit; font-size: 19px; font-weight: 700; cursor: pointer">{{pauseLabel}}</button>
+    <button type="button" onClick="{{reset}}" style="flex: 1; height: 60px; border: 1px solid #145A2A; border-radius: 16px; background: transparent; color: #46C66A; font-family: inherit; font-size: 19px; font-weight: 700; cursor: pointer">終了</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 20px; flex-grow: 1">
+  <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 40px">
+    <div style="font-variant-numeric: tabular-nums; letter-spacing: 0.16em; font-size: 13px; font-weight: 600; color: #46C66A">FINISHED</div>
+    <h1 style="margin: 0; font-size: 32px; font-weight: 700">全ラウンド終了</h1>
+  </div>
+  <div style="background: #061A0C; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-size: 17px; color: #46C66A">ラウンド数</span>
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 26px; font-weight: 700">{{countNum}}</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-size: 17px; color: #46C66A">配達時間</span>
+      <span style="font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-size: 26px; font-weight: 700">{{plannedText}}</span>
+    </div>
+  </div>
+  <div style="flex-grow: 1"></div>
+  <button type="button" onClick="{{reset}}" style="height: 64px; border: 0; border-radius: 18px; background: {{accent}}; color: #001A08; font-family: inherit; font-size: 22px; font-weight: 700; cursor: pointer">もう一度設定する</button>
+</div>
+</sc-if>
+
+<div aria-hidden="true" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0, 255, 65, 0.045) 0px, rgba(0, 255, 65, 0.045) 1px, transparent 1px, transparent 3px)"></div>
+
+<sc-if value="{{isLocked}}" hint-placeholder-val="{{ false }}">
+<div onContextMenu="{{blockMenu}}" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: transparent; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-end; gap: 6px; padding: 28px 20px 0; box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none">
+  <button type="button" aria-label="長押しでロック解除" onPointerDown="{{holdStart}}" onPointerUp="{{holdEnd}}" onPointerLeave="{{holdEnd}}" onPointerCancel="{{holdEnd}}" style="height: 48px; padding: 0 14px; border-radius: 14px; border: 2px solid {{accent}}; background: #061A0C; color: {{accent}}; display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; overflow: hidden; touch-action: none; font-family: inherit; font-size: 16px; font-weight: 700">
+    <span style="position: absolute; left: 0; bottom: 0; width: 100%; height: {{holdPct}}%; background: {{accent}}; opacity: 0.4"></span>
+    <span aria-hidden="true" style="position: relative; display: block; width: 16px; height: 19px">
+      <span style="position: absolute; top: 0; left: 2px; width: 12px; height: 10px; box-sizing: border-box; border: 2.5px solid {{accent}}; border-bottom: 0; border-radius: 6px 6px 0 0"></span>
+      <span style="position: absolute; bottom: 0; left: 0; width: 16px; height: 11px; background: {{accent}}; border-radius: 3px"></span>
+    </span>
+    <span style="position: relative">ロック中</span>
+  </button>
+  <div style="font-size: 13px; color: #46C66A">長押しで解除</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#00FF41","options":["#00FF41","#39FF8A","#7CFF00"]},"warnColor":{"editor":"color","default":"#FFB000"},"holdMs":{"editor":"int","default":1200,"min":300,"max":3000,"step":100,"unit":"ms"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: 'setup', hours: '4', minutes: '0', count: '120',
+      sessAccum: 0, since: null, now: Date.now(), roundSeen: 1,
+      locked: false, holdAt: null
+    };
+  }
+  componentDidMount() { this.timer = setInterval(() => this.tick(), 100); }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  totalSec() { return (Number(this.state.hours) || 0) * 3600 + (Number(this.state.minutes) || 0) * 60; }
+  countNum() { return Math.max(0, Math.floor(Number(this.state.count) || 0)); }
+  roundSec() { const c = this.countNum(); return c > 0 ? this.totalSec() / c : 0; }
+  elapsed(now) { const s = this.state; return (s.sessAccum + (s.since ? now - s.since : 0)) / 1000; }
+  buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+  tick() {
+    const now = Date.now();
+    const s = this.state;
+    const patch = { now: now };
+    if (s.locked && s.holdAt && now - s.holdAt >= (this.props.holdMs ?? 1200)) {
+      patch.locked = false; patch.holdAt = null;
+    }
+    if (s.screen === 'run') {
+      const el = this.elapsed(now);
+      if (el >= this.totalSec()) {
+        const ov = this.countNum() + 1;
+        if (s.roundSeen !== ov) { this.buzz([600, 200, 600, 200, 600]); patch.roundSeen = ov; }
+      } else {
+        const r = Math.floor(el / this.roundSec()) + 1;
+        if (r !== s.roundSeen) { this.buzz([300, 150, 300]); patch.roundSeen = r; }
+      }
+    }
+    this.setState(patch);
+  }
+
+  fmt(sec) {
+    sec = Math.max(0, Math.round(sec));
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), ss = sec % 60;
+    const p = (n) => (n < 10 ? '0' : '') + n;
+    return h > 0 ? h + ':' + p(m) + ':' + p(ss) : m + ':' + p(ss);
+  }
+
+  hhmm(ms) {
+    const d = new Date(ms);
+    const p = (n) => (n < 10 ? '0' : '') + n;
+    return p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#00FF41';
+    const warn = this.props.warnColor ?? '#FFB000';
+    const holdMs = this.props.holdMs ?? 1200;
+    const rs = this.roundSec();
+    const count = this.countNum();
+    const el = this.elapsed(s.now);
+    const round = rs > 0 ? Math.min(count, Math.floor(el / rs) + 1) : 1;
+    const inRound = rs > 0 ? el - (round - 1) * rs : 0;
+    const rem = Math.max(0, rs - inRound);
+    const overSec = s.screen === 'run' && rs > 0 ? el - this.totalSec() : -1;
+    const isOver = overSec >= 0;
+
+    return {
+      accent: accent,
+      isSetup: s.screen === 'setup',
+      isRun: s.screen === 'run',
+      isDone: s.screen === 'done',
+      isLocked: s.locked,
+      hours: s.hours, minutes: s.minutes, count: s.count,
+      countNum: count,
+      perRoundText: rs > 0 ? this.fmt(rs) : '--:--',
+      cannotStart: !(rs > 0),
+      round: round,
+      isPaused: s.screen === 'run' && !s.since,
+      pauseLabel: s.since ? '一時停止' : '再開',
+      timerText: isOver ? '+' + this.fmt(Math.floor(overSec)) : this.fmt(Math.ceil(rem)),
+      timerColor: isOver || rem <= 10 ? warn : '#C4FFD2',
+      timerSize: isOver ? (overSec >= 3600 ? 64 : 88) : 108,
+      timerLabel: isOver ? '超過時間' : '次のラウンドまで（1ラウンド ' + (rs > 0 ? this.fmt(rs) : '--:--') + '）',
+      pct: isOver ? 100 : (rs > 0 ? Math.min(100, (inRound / rs) * 100) : 0),
+      barColor: isOver ? warn : accent,
+      roundText: isOver ? '超過' : round,
+      leftText: isOver ? '超過' : Math.max(0, count - round),
+      roundSize: isOver ? 56 : 72,
+      roundColor: isOver ? warn : accent,
+      leftColor: isOver ? warn : '#C4FFD2',
+      overallColor: isOver ? warn : '#C4FFD2',
+      leftRounds: Math.max(0, count - round),
+      elapsedText: this.fmt(el),
+      overallText: isOver ? '+' + this.fmt(overSec) : this.fmt(this.totalSec() - el),
+      plannedText: this.fmt(this.totalSec()),
+      clockText: this.hhmm(s.now),
+      endText: this.hhmm(s.now + (this.totalSec() - el) * 1000),
+      holdPct: s.holdAt ? Math.min(100, ((s.now - s.holdAt) / holdMs) * 100) : 0,
+      onHours: (e) => this.setState({ hours: e.target.value }),
+      onMinutes: (e) => this.setState({ minutes: e.target.value }),
+      onCount: (e) => this.setState({ count: e.target.value }),
+      start: () => {
+        if (!(this.roundSec() > 0)) return;
+        const t = Date.now();
+        this.setState({ screen: 'run', sessAccum: 0, since: t, now: t, roundSeen: 1, locked: false, holdAt: null });
+      },
+      togglePause: () => {
+        const t = Date.now();
+        if (this.state.since) this.setState({ sessAccum: this.state.sessAccum + (t - this.state.since), since: null, now: t });
+        else this.setState({ since: t, now: t });
+      },
+      lock: () => this.setState({ locked: true, holdAt: null }),
+      holdStart: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ holdAt: Date.now() }); },
+      holdEnd: () => { if (this.state.holdAt) this.setState({ holdAt: null }); },
+      blockMenu: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      reset: () => this.setState({ screen: 'setup', sessAccum: 0, since: null, roundSeen: 1, locked: false, holdAt: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
