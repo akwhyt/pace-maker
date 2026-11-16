@@ -68,7 +68,8 @@ body {
 
 .screen { display: flex; flex-direction: column; flex-grow: 1; }
 .setup { gap: 20px; }
-.run { gap: 16px; }
+/* 余った縦スペースに応じて各パートの間隔を広げる（12〜22px） */
+.run { gap: clamp(12px, calc((100dvh - 695px) / 8), 22px); }
 .grow { flex-grow: 1; }
 
 .label { font-size: 16px; color: var(--sub); }
@@ -203,6 +204,9 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 }
 
 .lock-btn, .unlock-btn {
+  /* 「ロック」と「ロック中」で幅が変わらないよう、両方同じ幅にして中身を中央寄せ */
+  min-width: 120px;
+  justify-content: center;
   height: 48px;
   padding: 0 14px;
   border-radius: 14px;
@@ -248,44 +252,52 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
 .rounds {
   border-radius: 22px;
-  padding: 16px 18px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 4px 18px;
+  display: flex;
+  flex-direction: column;
 }
-.rounds-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.rounds-col.left { padding-right: 16px; border-right: 1px solid var(--divider); }
-.rounds-col.right { padding-left: 18px; }
+/* 現在ラウンドと残りは一番大事な情報なので、1行ずつ横幅いっぱいで大きく出す */
+.rounds-row {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.rounds-row + .rounds-row { border-top: 1px solid var(--divider); }
+.rounds-label { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.rounds-label .label:first-child { font-size: 20px; font-weight: 700; }
 .round-num {
   letter-spacing: -0.03em;
-  font-size: calc(72 * var(--u));
+  font-size: calc(116 * var(--u));
   font-weight: 700;
-  line-height: 1.05;
+  line-height: 1;
   white-space: nowrap;
   color: var(--text);
 }
 .round-num.accent { color: var(--accent); }
-.round-num.d4 { font-size: calc(56 * var(--u)); }
-.round-num.over { font-size: calc(56 * var(--u)); color: var(--warn); }
+.round-num.d4 { font-size: calc(96 * var(--u)); }
+.round-num.over { font-size: calc(88 * var(--u)); color: var(--warn); }
 
 .timer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding-top: 8px;
+  gap: 2px;
 }
-.timer-label { font-weight: 500; white-space: nowrap; }
+.timer-label { font-size: 14px; font-weight: 500; white-space: nowrap; }
 .timer-text {
   letter-spacing: -0.02em;
   white-space: nowrap;
-  font-size: calc(108 * var(--u));
+  font-size: calc(60 * var(--u));
   font-weight: 700;
   line-height: 1;
   color: var(--text);
 }
 .timer-text.warn { color: var(--warn); }
-.timer-text.over { font-size: calc(88 * var(--u)); }
-.timer-text.over-h { font-size: calc(64 * var(--u)); }
+.timer-text.over { font-size: calc(56 * var(--u)); }
+.timer-text.over-h { font-size: calc(48 * var(--u)); }
 
 .bar { height: 10px; background: var(--divider); border-radius: 999px; overflow: hidden; }
 .bar-fill {
@@ -296,6 +308,12 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   box-shadow: 0 0 8px rgba(0, 255, 65, 0.45);
 }
 .bar-fill.warn { background: var(--warn); box-shadow: 0 0 8px rgba(255, 176, 0, 0.45); }
+
+.overall { display: flex; flex-direction: column; gap: 6px; }
+.overall-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px; }
+.overall-pct { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.overall-pct.warn { color: var(--warn); }
+.bar-overall { height: 14px; }
 
 .totals {
   display: flex;
@@ -419,6 +437,8 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .unlock-face {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 8px;
   height: 100%;
   padding: 0 14px;
@@ -438,3 +458,14 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
 /* 計測中は長押しメニュー・テキスト選択を出さない */
 .run, .run * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+/* 縦が短い端末：ラウンド数の大きさは保ったまま、まわりの余白を詰める */
+@media (max-height: 760px) {
+  .app, .lock-inner { padding-top: calc(env(safe-area-inset-top, 0px) + 14px); }
+  .run { gap: 8px; }
+  .round-num { font-size: calc(108 * var(--u)); }
+  .end-card { padding: 8px 16px; }
+  .end-val { font-size: calc(38 * var(--u)); }
+  .now-val { font-size: calc(26 * var(--u)); }
+  .btn-secondary, .btn-ghost { height: 54px; }
+}

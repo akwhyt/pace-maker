@@ -18,6 +18,7 @@
     runCount: $('runCount'), roundNum: $('roundNum'), leftNum: $('leftNum'),
     timerLabel: $('timerLabel'), timerText: $('timerText'), barFill: $('barFill'),
     elapsedText: $('elapsedText'), overallText: $('overallText'),
+    overallFill: $('overallFill'), overallPct: $('overallPct'),
     runEnd: $('runEnd'), runClock: $('runClock'),
     pauseBtn: $('pauseBtn'), stopBtn: $('stopBtn'),
     lockLayer: $('lockLayer'), unlockBtn: $('unlockBtn'), holdFill: $('holdFill'),
@@ -220,7 +221,7 @@
       setClass(n, 'd4', !isOver && String(n.textContent).length >= 4);
     }
 
-    setText(el.timerLabel, isOver ? '超過時間' : '次のラウンドまで（1ラウンド ' + fmt(rs) + '）');
+    setText(el.timerLabel, isOver ? '超過時間' : '次の1個まで（1個 ' + fmt(rs) + '）');
     setText(el.timerText, isOver ? '+' + fmt(Math.floor(overSec)) : fmt(Math.ceil(rem)));
     setClass(el.timerText, 'warn', isOver || rem <= 10);
     setClass(el.timerText, 'over', isOver && overSec < 3600);
@@ -229,6 +230,12 @@
     const pct = isOver ? 100 : Math.min(100, (inRound / rs) * 100);
     el.barFill.style.width = pct.toFixed(2) + '%';
     setClass(el.barFill, 'warn', isOver);
+
+    const allPct = Math.min(100, (elSec / run.total) * 100);
+    el.overallFill.style.width = allPct.toFixed(2) + '%';
+    setClass(el.overallFill, 'warn', isOver);
+    setText(el.overallPct, Math.floor(allPct) + '%');
+    setClass(el.overallPct, 'warn', isOver);
 
     setText(el.elapsedText, fmt(Math.floor(elSec)));
     setText(el.overallText, isOver ? '+' + fmt(Math.floor(overSec)) : fmt(Math.ceil(run.total - elSec)));

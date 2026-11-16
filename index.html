@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="description" content="配達時間と個数から1ラウンドの時間を出し、ラウンドごとのカウントダウンで配達ペースを保つタイマー">
+<meta name="description" content="配達時間と個数から1個あたりの時間を出し、1個ごとのカウントダウンで配達ペースを保つタイマー">
 <title>配達ペースメーカー</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
@@ -52,10 +52,10 @@
 
     <div class="per-round">
       <div class="col">
-        <div class="label">1ラウンドあたり</div>
+        <div class="label">1個あたり</div>
         <div id="perRound" class="per-round-val accent">--:--</div>
       </div>
-      <div class="rounds-x">× <span id="setupCount">0</span>ラウンド</div>
+      <div class="rounds-x">× <span id="setupCount">0</span>個</div>
     </div>
 
     <div class="start-preview">
@@ -86,22 +86,35 @@
     </header>
 
     <div class="card rounds">
-      <div class="rounds-col left">
-        <div class="label nowrap">現在 <span class="tnum">/ <span id="runCount">0</span></span></div>
+      <div class="rounds-row">
+        <div class="rounds-label">
+          <div class="label nowrap">現在</div>
+          <div class="label sm nowrap tnum">/ <span id="runCount">0</span></div>
+        </div>
         <div id="roundNum" class="round-num accent">1</div>
       </div>
-      <div class="rounds-col right">
-        <div class="label nowrap">残り</div>
+      <div class="rounds-row">
+        <div class="rounds-label">
+          <div class="label nowrap">残り</div>
+        </div>
         <div id="leftNum" class="round-num">0</div>
       </div>
     </div>
 
     <div class="timer">
-      <div id="timerLabel" class="label timer-label">次のラウンドまで</div>
+      <div id="timerLabel" class="label timer-label">次の1個まで</div>
       <div id="timerText" class="timer-text">0:00</div>
     </div>
 
     <div class="bar"><div id="barFill" class="bar-fill"></div></div>
+
+    <div class="overall">
+      <div class="overall-head">
+        <span class="label">全体</span>
+        <span id="overallPct" class="overall-pct">0%</span>
+      </div>
+      <div class="bar bar-overall"><div id="overallFill" class="bar-fill"></div></div>
+    </div>
 
     <div class="totals">
       <div class="pair">
