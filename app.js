@@ -16,10 +16,11 @@
     setupClock: $('setupClock'), setupEnd: $('setupEnd'), startBtn: $('startBtn'),
     pausedBadge: $('pausedBadge'), lockBtn: $('lockBtn'),
     runCount: $('runCount'), roundNum: $('roundNum'), leftNum: $('leftNum'),
-    timerLabel: $('timerLabel'), timerText: $('timerText'), barFill: $('barFill'),
+    timerLabel: $('timerLabel'), timerText: $('timerText'),
     elapsedText: $('elapsedText'), overallText: $('overallText'),
     overallFill: $('overallFill'), overallPct: $('overallPct'),
     runEnd: $('runEnd'), runClock: $('runClock'),
+    prevBtn: $('prevBtn'), nextBtn: $('nextBtn'),
     pauseBtn: $('pauseBtn'), stopBtn: $('stopBtn'),
     lockLayer: $('lockLayer'), unlockBtn: $('unlockBtn'), holdFill: $('holdFill'),
   };
@@ -45,7 +46,10 @@
     count: saved.count != null ? String(saved.count) : '120',
   };
 
-  // run: { total(sec), count, accum(ms), since(epoch ms|null), roundSeen, overEnd(epoch ms|null) }
+  // run: { total(sec), count, accum(ms), since(epoch ms|null), roundSeen, overEnd(epoch ms|null),
+  //        doneBase, baseSec }
+  // doneBase / baseSec：前へ・次へで個数を動かした時点の「済んだ個数」と経過秒。
+  // そこから先は、残り時間を残り個数で割り直したペースで進む。
   let run = null;
   let locked = false;
   let holdAt = null;
@@ -83,9 +87,9 @@
   }
 
   const elapsedSec = (now) => (run.accum + (run.since ? now - run.since : 0)) / 1000;
-  const roundSec = () => run.total / run.count;
+  const roundSec = () => (run.total - run.baseSec) / (run.count - run.doneBase);
   function roundAt(elSec) {
-    return Math.min(run.count, Math.floor(elSec / roundSec()) + 1);
+    return Math.min(run.count, run.doneBase + Math.floor((elSec - run.baseSec) / roundSec()) + 1);
   }
 
   // ---------- wake lock ----------
@@ -128,7 +132,7 @@
     const count = settingsCount();
     if (!(total > 0 && count > 0)) return;
     saveSettings();
-    run = { total, count, accum: 0, since: Date.now(), roundSeen: 1, overEnd: null };
+    run = { total, count, accum: 0, since: Date.now(), roundSeen: 1, overEnd: null, doneBase: 0, baseSec: 0 };
     saveRun();
     showScreen('run');
     acquireWake();
@@ -146,6 +150,20 @@
       run.since = t;
       acquireWake();
     }
+    saveRun();
+    render();
+  }
+
+  // 前の1個に戻る(-1)／次の1個に進む(+1)。終了予定は変えず、残り時間を残り個数で割り直す
+  function step(dir) {
+    if (!run) return;
+    const elSec = elapsedSec(Date.now());
+    if (elSec >= run.total) return;
+    const target = roundAt(elSec) + dir;
+    if (target < 1 || target > run.count) return;
+    run.doneBase = target - 1;
+    run.baseSec = elSec;
+    run.roundSeen = target; // 手動で動かしたときは振動させない
     saveRun();
     render();
   }
@@ -191,7 +209,7 @@
     const overSec = elSec - run.total;
     const isOver = overSec >= 0;
     const round = roundAt(elSec);
-    const inRound = elSec - (round - 1) * rs;
+    const inRound = elSec - run.baseSec - (round - 1 - run.doneBase) * rs;
     const rem = Math.max(0, rs - inRound);
 
     // ラウンド切り替え・超過突入の検出
@@ -209,27 +227,21 @@
     setText(el.pauseBtn, paused ? '再開' : '一時停止');
 
     setText(el.runCount, run.count);
-    if (isOver) {
-      setText(el.roundNum, '超過');
-      setText(el.leftNum, '超過');
-    } else {
-      setText(el.roundNum, round);
-      setText(el.leftNum, Math.max(0, run.count - round));
-    }
-    for (const n of [el.roundNum, el.leftNum]) {
-      setClass(n, 'over', isOver);
-      setClass(n, 'd4', !isOver && String(n.textContent).length >= 4);
-    }
+    setText(el.roundNum, isOver ? run.count : round);
+    setText(el.leftNum, isOver ? '超過' : Math.max(0, run.count - round));
+    setClass(el.leftNum, 'over', isOver);
+    setClass(el.leftNum, 'd4', !isOver && String(el.leftNum.textContent).length >= 4);
 
-    setText(el.timerLabel, isOver ? '超過時間' : '次の1個まで（1個 ' + fmt(rs) + '）');
+    const prevOff = isOver || round <= 1;
+    const nextOff = isOver || round >= run.count;
+    if (el.prevBtn.disabled !== prevOff) el.prevBtn.disabled = prevOff;
+    if (el.nextBtn.disabled !== nextOff) el.nextBtn.disabled = nextOff;
+
+    setText(el.timerLabel, isOver ? '超過時間' : '次の1個まで（1個 ' + fmt(Math.ceil(rs)) + '）');
     setText(el.timerText, isOver ? '+' + fmt(Math.floor(overSec)) : fmt(Math.ceil(rem)));
     setClass(el.timerText, 'warn', isOver || rem <= 10);
     setClass(el.timerText, 'over', isOver && overSec < 3600);
     setClass(el.timerText, 'over-h', isOver && overSec >= 3600);
-
-    const pct = isOver ? 100 : Math.min(100, (inRound / rs) * 100);
-    el.barFill.style.width = pct.toFixed(2) + '%';
-    setClass(el.barFill, 'warn', isOver);
 
     const allPct = Math.min(100, (elSec / run.total) * 100);
     el.overallFill.style.width = allPct.toFixed(2) + '%';
@@ -291,6 +303,8 @@
   });
   el.pauseBtn.addEventListener('click', togglePause);
   el.stopBtn.addEventListener('click', stop);
+  el.prevBtn.addEventListener('click', () => step(-1));
+  el.nextBtn.addEventListener('click', () => step(1));
   el.lockBtn.addEventListener('click', () => setLocked(true));
 
   // ---------- lock / long press ----------
@@ -346,7 +360,15 @@
       since: savedRun.since || null,
       roundSeen: 0,
       overEnd: savedRun.overEnd != null ? savedRun.overEnd : null,
+      doneBase: 0,
+      baseSec: 0,
     };
+    // 前へ・次への状態を復元（壊れた値なら最初からのペースに戻す）
+    const db = savedRun.doneBase, bs = savedRun.baseSec;
+    if (Number.isInteger(db) && db >= 0 && db < run.count && typeof bs === 'number' && bs >= 0 && bs < run.total) {
+      run.doneBase = db;
+      run.baseSec = bs;
+    }
     // 復帰時は振動させずに現在ラウンドを既読扱いにする
     const elSec = elapsedSec(Date.now());
     run.roundSeen = elSec >= run.total ? run.count + 1 : roundAt(elSec);

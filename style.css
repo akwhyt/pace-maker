@@ -237,18 +237,8 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   background: currentColor;
   border-radius: 3px;
 }
-/* 解錠アイコン：つるを持ち上げ、右脚だけ本体に刺さった形 */
-.lock-icon.open { margin-top: 5px; }
-.lock-icon.open .shackle { top: -5px; }
-.lock-icon.open .shackle::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  right: -2.5px;
-  width: 2.5px;
-  height: 4px;
-  background: currentColor;
-}
+/* 解錠アイコン（SVG）：閉じたアイコンと同じ大きさで、つるだけ5px持ち上げた形 */
+.lock-open { display: block; width: 16px; height: 24px; flex-shrink: 0; }
 
 .rounds {
   border-radius: 22px;
@@ -256,7 +246,7 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   display: flex;
   flex-direction: column;
 }
-/* 現在ラウンドと残りは一番大事な情報なので、1行ずつ横幅いっぱいで大きく出す */
+/* 残り個数は一番大事な情報なので、横幅いっぱいで大きく出す */
 .rounds-row {
   padding: 4px 0;
   display: flex;
@@ -287,6 +277,46 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   gap: 2px;
 }
 .timer-label { font-size: 14px; font-weight: 500; white-space: nowrap; }
+
+/* 現在の個数 / 総数 */
+.cur-line {
+  text-align: center;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: calc(64 * var(--u));
+  white-space: nowrap;
+  color: var(--text);
+}
+.cur-line .of { color: var(--sub); font-size: 0.62em; }
+
+/* カウントダウンと、左右の前へ／次へボタン */
+.timer-row {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.timer-row .timer-text { flex: 1; min-width: 0; text-align: center; }
+.step-btn {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--sub);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.12em;
+  display: grid;
+  place-items: center;
+  padding: 0 4px 0 0;
+}
+.step-btn:not(:disabled):active { background: var(--divider); color: var(--accent); }
+.step-btn:disabled { opacity: 0.25; }
 .timer-text {
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -386,17 +416,6 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .btn-secondary { background: var(--card); color: var(--text); }
 .btn-ghost { background: transparent; color: var(--sub); }
 .btn-secondary:active, .btn-ghost:active { background: var(--divider); }
-
-/* ---------- 走査線 ---------- */
-.scanlines {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(0deg,
-    rgba(0, 255, 65, 0.045) 0px, rgba(0, 255, 65, 0.045) 1px,
-    transparent 1px, transparent 3px);
-  z-index: 5;
-}
 
 /* ---------- 画面ロック ---------- */
 .lock-layer {

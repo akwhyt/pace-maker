@@ -79,7 +79,11 @@
       <div class="header-right">
         <div id="pausedBadge" class="badge" hidden>一時停止中</div>
         <button id="lockBtn" type="button" class="lock-btn">
-          <span class="lock-icon open" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>
+          <!-- 解錠アイコン：つるを持ち上げ、右脚だけまっすぐ本体に刺さった形 -->
+          <svg class="lock-open" viewBox="0 0 16 24" aria-hidden="true">
+            <path d="M3.25 10V6a4.75 4.75 0 0 1 9.5 0v8" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <rect x="0" y="13" width="16" height="11" rx="3" fill="currentColor"/>
+          </svg>
           ロック
         </button>
       </div>
@@ -88,25 +92,22 @@
     <div class="card rounds">
       <div class="rounds-row">
         <div class="rounds-label">
-          <div class="label nowrap">現在</div>
-          <div class="label sm nowrap tnum">/ <span id="runCount">0</span></div>
-        </div>
-        <div id="roundNum" class="round-num accent">1</div>
-      </div>
-      <div class="rounds-row">
-        <div class="rounds-label">
           <div class="label nowrap">残り</div>
         </div>
-        <div id="leftNum" class="round-num">0</div>
+        <div id="leftNum" class="round-num accent">0</div>
       </div>
     </div>
+
+    <div class="cur-line"><span id="roundNum">1</span><span class="of"> / <span id="runCount">0</span></span></div>
 
     <div class="timer">
       <div id="timerLabel" class="label timer-label">次の1個まで</div>
-      <div id="timerText" class="timer-text">0:00</div>
+      <div class="timer-row">
+        <button id="prevBtn" type="button" class="step-btn" aria-label="前の1個に戻る">&lt;&lt;</button>
+        <div id="timerText" class="timer-text">0:00</div>
+        <button id="nextBtn" type="button" class="step-btn" aria-label="次の1個に進む">&gt;&gt;</button>
+      </div>
     </div>
-
-    <div class="bar"><div id="barFill" class="bar-fill"></div></div>
 
     <div class="overall">
       <div class="overall-head">
@@ -145,18 +146,16 @@
     </div>
   </section>
 
-  <div class="scanlines" aria-hidden="true"></div>
-
   <!-- 画面ロック -->
   <div id="lockLayer" class="lock-layer" hidden>
     <div class="lock-inner">
     <button id="unlockBtn" type="button" class="unlock-btn" aria-label="長押しでロック解除">
       <span class="unlock-face base" aria-hidden="true">
-        <span class="lock-icon"><span class="shackle"></span><span class="body"></span></span>ロック中
+        <span class="lock-icon"><span class="shackle"></span><span class="body"></span></span>長押し
       </span>
       <!-- 緑で満たした面。長押し中は上から減っていく -->
       <span id="holdFill" class="unlock-face fill">
-        <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>ロック中
+        <span class="lock-icon" aria-hidden="true"><span class="shackle"></span><span class="body"></span></span>長押し
       </span>
     </button>
     </div>
